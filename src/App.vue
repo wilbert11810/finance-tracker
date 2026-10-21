@@ -1,24 +1,32 @@
 <template>
   <div id="app">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top shadow-sm">
-    <h2 class="company-name">Finance Management</h2>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="ms-auto">
-        <li class="nav-item"><router-link to="/cos30043/s104323659/finance-project/">Home</router-link></li>
-        <li class="nav-item"><router-link to="/cos30043/s104323659/finance-project/expenses">Expenses</router-link></li>
-        <li class="nav-item"><router-link to="/cos30043/s104323659/finance-project/about">About</router-link></li>
-        <li class="nav-item"><router-link to="/cos30043/s104323659/finance-project/news">News</router-link></li>
+    <nav
+      class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top shadow-sm"
+    >
+      <h2 class="company-name">Finance Management</h2>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="ms-auto">
+          <li class="nav-item"><router-link to="/">Home</router-link></li>
+          <li class="nav-item">
+            <router-link to="/expenses">Expenses</router-link>
+          </li>
+          <li class="nav-item"><router-link to="/about">About</router-link></li>
+          <li class="nav-item"><router-link to="/news">News</router-link></li>
 
-        <router-link v-if="!user" to="/cos30043/s104323659/finance-project/signin">Sign In</router-link>
-        <router-link v-if="!user" to="/cos30043/s104323659/finance-project/signup">Sign Up</router-link>
-        
+          <router-link v-if="!user" to="/signin">Sign In</router-link>
+          <router-link v-if="!user" to="/signup">Sign Up</router-link>
 
-        <button v-if="user" @click="logout">Logout</button>
-      </ul>
-    </div>
+          <button v-if="user" @click="logout">Logout</button>
+        </ul>
+      </div>
     </nav>
 
     <div class="main-content">
@@ -30,10 +38,10 @@
 <script>
 import { getCurrentUser, logoutUser } from "./utils/auth.js";
 
-export default { 
+export default {
   data() {
     return {
-      user: null
+      user: null,
     };
   },
   async mounted() {
@@ -46,8 +54,8 @@ export default {
     },
     async refreshUser() {
       this.user = await getCurrentUser();
-    }
-  }
+    },
+  },
 };
 </script>
 

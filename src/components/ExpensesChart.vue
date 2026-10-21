@@ -16,11 +16,7 @@
         Filter by Month:
         <select v-model="selectedMonth" @change="fetchData">
           <option value="">All Months</option>
-          <option
-            v-for="month in availableMonths"
-            :value="month"
-            :key="month"
-          >
+          <option v-for="month in availableMonths" :value="month" :key="month">
             {{ formatMonth(month) }}
           </option>
         </select>
@@ -37,6 +33,7 @@
 
 <script>
 import { Chart, registerables } from "chart.js";
+import { api } from "../api.js";
 Chart.register(...registerables);
 
 export default {
@@ -48,7 +45,7 @@ export default {
       availableMonths: [],
       chartInstance: null,
       expensesData: {},
-      errorMessage: ""
+      errorMessage: "",
     };
   },
   mounted() {
@@ -58,36 +55,40 @@ export default {
     this.destroyChart();
   },
   methods: {
-    fetchData() {
+    async fetchData() {
       this.errorMessage = "";
       try {
-        const all = JSON.parse(localStorage.getItem("transactions") || "[]");
-        let filtered = all;
-        if (this.selectedMonth) {
-          filtered = filtered.filter(t => t.date && t.date.startsWith(this.selectedMonth));
-        }
-        if (this.selectedCategory) {
-          filtered = filtered.filter(t => t.category === this.selectedCategory);
-        }
-        const totals = { food: 0, bills: 0, entertainment: 0, others: 0 };
-        filtered.forEach(t => {
-          const cat = t.category in totals ? t.category : "others";
-          totals[cat] += Number(t.amount);
+        const params = new URLSearchParams();
+        if (this.selectedMonth) params.append("month", this.selectedMonth);
+        if (this.selectedCategory)
+          params.append("category", this.selectedCategory);
+        const response = await api.get("/get_visualization_transactions.php", {
+          params,
         });
-        this.expensesData = Object.values(totals).some(v => v > 0) ? totals : {};
-        this.updateAvailableMonths({ transactions: all });
+        const data = response.data;
+        this.expensesData =
+          data.visualizationData &&
+          Object.keys(data.visualizationData).length > 0
+            ? data.visualizationData
+            : {};
+        this.updateAvailableMonths(data);
         this.renderChart();
       } catch (error) {
         console.error("Error fetching expense data:", error);
-        this.errorMessage = "Failed to load expense data. Please try again later.";
+        this.errorMessage =
+          "Failed to load expense data. Please try again later.";
         this.expensesData = {};
-        this.renderChart();
+        this.renderChart(); // Render empty state
       }
     },
     updateAvailableMonths(responseData) {
-      if (responseData && responseData.transactions && Array.isArray(responseData.transactions)) {
+      if (
+        responseData &&
+        responseData.transactions &&
+        Array.isArray(responseData.transactions)
+      ) {
         const monthsSet = new Set();
-        responseData.transactions.forEach(transaction => {
+        responseData.transactions.forEach((transaction) => {
           if (transaction.date) {
             monthsSet.add(this.getExpenseMonth(transaction.date));
           }
@@ -97,7 +98,11 @@ export default {
         const currentDate = new Date();
         const dummyMonths = [];
         for (let i = 0; i < 6; i++) {
-          const d = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+          const d = new Date(
+            currentDate.getFullYear(),
+            currentDate.getMonth() - i,
+            1,
+          );
           const monthStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
           dummyMonths.push(monthStr);
         }
@@ -124,17 +129,17 @@ export default {
         if (this.chartInstance) {
           this.chartInstance.destroy();
         }
-        
+
         if (!this.expensesData || Object.keys(this.expensesData).length === 0) {
           this.renderEmptyState(ctx);
           return;
         }
-        
+
         const categories = ["food", "bills", "entertainment", "others"];
         const categoryLabels = ["Food", "Bills", "Entertainment", "Others"];
-        
+
         const chartData = categories.map(
-          category => Number(this.expensesData[category]) || 0
+          (category) => Number(this.expensesData[category]) || 0,
         );
         this.chartInstance = new Chart(ctx, {
           type: "bar",
@@ -148,17 +153,17 @@ export default {
                   "rgba(255, 99, 132, 0.7)",
                   "rgba(54, 162, 235, 0.7)",
                   "rgba(255, 206, 86, 0.7)",
-                  "rgba(75, 192, 192, 0.7)"
+                  "rgba(75, 192, 192, 0.7)",
                 ],
                 borderColor: [
                   "rgba(255, 99, 132, 1)",
                   "rgba(54, 162, 235, 1)",
                   "rgba(255, 206, 86, 1)",
-                  "rgba(75, 192, 192, 1)"
+                  "rgba(75, 192, 192, 1)",
                 ],
-                borderWidth: 1
-              }
-            ]
+                borderWidth: 1,
+              },
+            ],
           },
           options: {
             responsive: true,
@@ -168,20 +173,20 @@ export default {
                 beginAtZero: true,
                 title: {
                   display: true,
-                  text: "Amount ($)"
-                }
-              }
+                  text: "Amount ($)",
+                },
+              },
             },
             plugins: {
               tooltip: {
                 callbacks: {
                   label: function (context) {
                     return `$${context.raw.toFixed(2)}`;
-                  }
-                }
-              }
-            }
-          }
+                  },
+                },
+              },
+            },
+          },
         });
       });
     },
@@ -190,7 +195,7 @@ export default {
         0,
         0,
         this.$refs.chartCanvas.width,
-        this.$refs.chartCanvas.height
+        this.$refs.chartCanvas.height,
       );
       ctx.font = "16px Arial";
       ctx.fillStyle = "#999";
@@ -198,7 +203,7 @@ export default {
       ctx.fillText(
         "No expense data available",
         this.$refs.chartCanvas.width / 2,
-        this.$refs.chartCanvas.height / 2
+        this.$refs.chartCanvas.height / 2,
       );
     },
     destroyChart() {
@@ -206,8 +211,8 @@ export default {
         this.chartInstance.destroy();
         this.chartInstance = null;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

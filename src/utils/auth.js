@@ -1,17 +1,16 @@
-export function getCurrentUser() {
-    const raw = localStorage.getItem("user");
-    return raw ? JSON.parse(raw) : null;
+import { api } from "../api";
+
+export async function getCurrentUser() {
+  try {
+    const response = await api.get("/session.php");
+    return response.data.user || null;
+  } catch (error) {
+    console.error("Error fetching session:", error);
+    return null;
+  }
 }
 
-export function logoutUser() {
-    localStorage.removeItem("user");
-}
-
-export function getUsers() {
-    const raw = localStorage.getItem("users");
-    return raw ? JSON.parse(raw) : [];
-}
-
-export function saveUsers(users) {
-    localStorage.setItem("users", JSON.stringify(users));
+export async function logoutUser() {
+  await api.get("/logout.php");
+  localStorage.removeItem("user");
 }

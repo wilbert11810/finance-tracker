@@ -1,12 +1,21 @@
 <template>
   <div class="container-home container mt-4">
-    
     <div class="alert alert-primary text-center">
-      <h2>Welcome back, {{ firstName }} {{ lastName ? lastName[0] : '' }}!</h2>
+      <h2>Welcome back, {{ firstName }} {{ lastName ? lastName[0] : "" }}!</h2>
       <div class="mb-3">
         <label for="budgetInput">Set Your Monthly Budget:</label><br />
-        <small v-if="errorMessage" class="text-danger d-block mt-1">{{ errorMessage }}</small>
-        <input v-model="monthBudget" type="number" class="form-control" id="budgetInput" placeholder="Set Your Budget" @change="saveBudget" min="1">
+        <small v-if="errorMessage" class="text-danger d-block mt-1">{{
+          errorMessage
+        }}</small>
+        <input
+          v-model="monthBudget"
+          type="number"
+          class="form-control"
+          id="budgetInput"
+          placeholder="Set Your Budget"
+          @change="saveBudget"
+          min="1"
+        />
       </div>
 
       <div class="row mb-4">
@@ -24,12 +33,12 @@
         </div>
       </div>
       <div class="progress mt-3">
-        <div 
-          class="progress-bar" 
+        <div
+          class="progress-bar"
           :class="remainingBudgetClass"
-          role="progressbar" 
-          :style="{ width: remainingBudgetPercentage + '%' }">
-        </div>
+          role="progressbar"
+          :style="{ width: remainingBudgetPercentage + '%' }"
+        ></div>
       </div>
       <p class="mt-2 text-center">Remaining Budget: ${{ remainingBudget }}</p>
     </div>
@@ -41,6 +50,7 @@
 
 <script>
 import ExpenseChartWithFilters from "./ExpensesChart.vue";
+import { api } from "../api.js";
 export default {
   data() {
     return {
@@ -51,43 +61,49 @@ export default {
       remainingBudget: 0,
       remainingBudgetPercentage: 100,
       remainingBudgetClass: "bg-success",
-      errorMessage: ""
-
-    }
+      errorMessage: "",
+    };
   },
   mounted() {
     this.fetchData();
     this.getBudgetData();
   },
   methods: {
-    fetchData() {
-      const user = JSON.parse(localStorage.getItem("user") || "null");
-      this.firstName = user?.first_name || "Guest";
-      this.lastName = user?.last_name || "Guest";
+    async fetchData() {
+      try {
+        const response = await api.get("/retrieve_user.php");
+        const data = response.data;
+        this.firstName = data.firstName || "Guest";
+        this.lastName = data.lastName || "Guest";
+      } catch (error) {
+        console.log("Error retrieving data: ", error);
+      }
     },
-    getBudgetData() {
-      const transactions = JSON.parse(localStorage.getItem("transactions") || "[]");
-      const currentMonth = new Date().toISOString().slice(0, 7);
-      this.totalSpent = transactions
-        .filter(t => t.date && t.date.startsWith(currentMonth))
-        .reduce((sum, t) => sum + Number(t.amount), 0)
-        .toFixed(2);
+    async getBudgetData() {
+      const response = await api.get("/budget.php");
+      const data = response.data;
+      this.totalSpent = data.totalSpent || 0;
       this.calculateBudget();
     },
     saveBudget() {
-      if (!this.monthBudget || isNaN(this.monthBudget) || this.monthBudget < 1) {
+      if (
+        !this.monthBudget ||
+        isNaN(this.monthBudget) ||
+        this.monthBudget < 1
+      ) {
         this.errorMessage = "Please Input a Valid Number.";
-        this.monthBudget = ""; 
-        return; 
+        this.monthBudget = "";
+        return;
       }
 
-      this.errorMessage = ""; 
+      this.errorMessage = "";
       localStorage.setItem("monthlyBudget", this.monthBudget);
       this.calculateBudget();
     },
     calculateBudget() {
       this.remainingBudget = this.monthBudget - this.totalSpent;
-      this.remainingBudgetPercentage = (this.remainingBudget / this.monthBudget) * 100;
+      this.remainingBudgetPercentage =
+        (this.remainingBudget / this.monthBudget) * 100;
 
       if (this.remainingBudgetPercentage < 25) {
         this.remainingBudgetClass = "bg-danger";
@@ -96,11 +112,11 @@ export default {
       } else {
         this.remainingBudgetClass = "bg-success";
       }
-    }
+    },
   },
   components: {
-    ExpenseChartWithFilters
-  }
+    ExpenseChartWithFilters,
+  },
 };
 </script>
 <style>
