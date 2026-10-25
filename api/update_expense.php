@@ -18,4 +18,4 @@ $stmt->bind_param("sdsssii", $data["title"], $data["amount"], $data["category"],
 $stmt->execute();
 
 echo json_encode(["message" => "Expense updated successfully!"]);
-?>
+

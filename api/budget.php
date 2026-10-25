@@ -14,4 +14,4 @@ $data = $result->fetch_assoc();
 
 echo json_encode(["totalSpent" => isset($data["totalSpent"]) ? $data["totalSpent"] : 0]);
 
-?>
+

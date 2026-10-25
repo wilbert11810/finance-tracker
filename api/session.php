@@ -9,4 +9,4 @@ if (isset($_SESSION["user"])) {
 } else {
     echo json_encode(["error" => "No active session"]);
 }
-?>
+

@@ -111,4 +111,3 @@ echo json_encode(array(
     "totalRecords" => $totalRecords,
     "totalPages"   => ceil($totalRecords / $perPage)
 ));
-?>

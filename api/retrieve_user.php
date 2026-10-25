@@ -17,4 +17,3 @@ echo json_encode([
     "firstName" => isset($user["first_name"]) ? $user["first_name"] : "Guest",
     "lastName" => isset($user["last_name"]) ? $user["last_name"] : ""
 ]);
-?>

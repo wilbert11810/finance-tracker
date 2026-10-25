@@ -70,4 +70,3 @@ echo json_encode([
     "visualizationData" => $visualizationData,
     "transactions" => $transactions
 ]);
-?>

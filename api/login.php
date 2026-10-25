@@ -35,4 +35,4 @@ if ($user && $password === $user["password_hash"]) {
     $_SESSION["user"] = $user;
     echo json_encode(["message" => "Login successful!", "user" => $user]);
 }
-?>
+

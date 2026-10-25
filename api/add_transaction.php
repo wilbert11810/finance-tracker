@@ -22,4 +22,4 @@ $stmt->bind_param("isdsss", $user_id, $data["title"], $data["amount"], $data["da
 $stmt->execute();
 
 echo json_encode(["success" => true, "message" => "Transaction added successfully!"]);
-?>
+
