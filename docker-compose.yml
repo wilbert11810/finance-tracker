@@ -1,0 +1,29 @@
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: finance_tracker
+      MYSQL_USER: finance_app
+      MYSQL_PASSWORD: local-dev-only
+      MYSQL_ROOT_PASSWORD: local-root-only
+    ports: ["3306:3306"]
+    volumes:
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      retries: 20
+  api:
+    build: { context: ., target: php-base }
+    ports: ["8000:80"]
+    volumes: ["./api:/var/www/html/api"]
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: finance_app
+      DB_PASSWORD: local-dev-only
+      DB_NAME: finance_tracker
+    depends_on:
+      db:
+        condition: service_healthy
