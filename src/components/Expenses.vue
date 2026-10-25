@@ -176,8 +176,8 @@
             </thead>
             <tbody>
               <tr
-                v-for="expense in paginatedExpenses"
-                :key="expense.title"
+                v-for="expense in expenses"
+                :key="expense.id"
                 @click="editExpense(expense)"
               >
                 <td>{{ expense.date }}</td>
@@ -378,7 +378,7 @@ export default {
         startDate: this.filterStartDate,
         endDate: this.filterEndDate,
         search: this.searchQuery,
-      }).toString();
+      });
 
       try {
         const response = await api.get("/get_transactions.php", { params });
@@ -435,42 +435,21 @@ export default {
     this.fetchTransactions();
   },
   computed: {
-    paginatedExpenses() {
-      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-      const endIndex = startIndex + this.itemsPerPage;
-      return this.filteredExpenses.slice(startIndex, endIndex);
-    },
-    filteredExpenses() {
-      if (!this.expenses || !Array.isArray(this.expenses)) {
-        return [];
-      }
-      return this.expenses
-        .filter((expense) => {
-          const matchesCategory = this.filterCategory
-            ? expense.category === this.filterCategory
-            : true;
-          const matchesDate =
-            this.filterStartDate && this.filterEndDate
-              ? new Date(expense.date) >= new Date(this.filterStartDate) &&
-                new Date(expense.date) <= new Date(this.filterEndDate)
-              : true;
-          const matchesSearch = expense.title
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase());
-          return matchesCategory && matchesDate && matchesSearch;
-        })
-        .sort((a, b) => {
-          if (this.sortBy === "amount") {
-            return b.amount - a.amount;
-          } else {
-            return new Date(b.date) - new Date(a.date);
-          }
-        });
+    filters() {
+      return [
+        this.sortBy,
+        this.filterCategory,
+        this.filterStartDate,
+        this.filterEndDate,
+        this.searchQuery,
+      ];
     },
   },
   watch: {
+    filters() {
+      this.fetchTransactions(1);
+    },
     expenses(newExpenses) {
-      this.currentPage = 1;
       localStorage.setItem("expenses", JSON.stringify(newExpenses));
     },
   },
