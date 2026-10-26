@@ -24,12 +24,12 @@ if (!$user) {
     exit();
 }
 
-if ($password !== $user["password_hash"] ) {
-    echo json_encode(["error" => "Incorrect password"]); 
+if (!password_verify($password, $user["password_hash"])) {
+    echo json_encode(["error" => "Incorrect password"]);
     exit();
 }
-if ($user && $password === $user["password_hash"]) {
-    $_SESSION["user"] = $user;
-    echo json_encode(["message" => "Login successful!", "user" => $user]);
-}
+
+$_SESSION["user"] = $user;
+echo json_encode(["message" => "Login successful!", "user" => $user]);
+
 
