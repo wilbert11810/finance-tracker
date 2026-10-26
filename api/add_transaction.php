@@ -1,7 +1,5 @@
 <?php
-include "db.php";
-session_start();
-header("Content-Type: application/json");
+require __DIR__ . "/bootstrap.php";
 
 if (!isset($_SESSION["user"])) {
     echo json_encode(["error" => "Unauthorized access"]);

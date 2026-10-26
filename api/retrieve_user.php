@@ -1,8 +1,5 @@
 <?php
-include "db.php";
-session_start();
-
-header("Content-Type: application/json");
+require __DIR__ . "/bootstrap.php";
 
 $user_id = $_SESSION["user"]["id"];
 

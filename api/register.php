@@ -1,7 +1,5 @@
 <?php
-include "db.php";
-
-header("Content-Type: application/json");
+require __DIR__ . "/bootstrap.php";
 
 $data = json_decode(file_get_contents("php://input"), true);
 $first_name = $data["first_name"];

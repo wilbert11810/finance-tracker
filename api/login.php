@@ -1,8 +1,5 @@
 <?php
-include "db.php";
-session_start();
-
-header("Content-Type: application/json");
+require __DIR__ . "/bootstrap.php";
 
 $data = json_decode(file_get_contents("php://input"), true);
 $email = isset($data["email"]) ? $data["email"] : "";

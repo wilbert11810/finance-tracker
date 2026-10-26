@@ -1,8 +1,5 @@
 <?php
-include "db.php";
-
-header("Content-Type: application/json");
-session_start();
+require __DIR__ . "/bootstrap.php";
 
 $user_id = $_SESSION["user"]["id"];
 $sql = "SELECT SUM(amount) AS totalSpent FROM finance WHERE user_id = ? AND MONTH(date) = MONTH(CURRENT_DATE())";
