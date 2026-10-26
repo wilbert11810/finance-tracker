@@ -301,7 +301,6 @@ export default {
   },
   data() {
     return {
-      user: JSON.parse(localStorage.getItem("user") || null),
       title: "",
       amount: "",
       datepicker: "",
@@ -343,7 +342,6 @@ export default {
 
       if (!this.errors.length) {
         const newExpense = {
-          user_id: this.user.id,
           title: this.title,
           amount: this.amount,
           date: this.datepicker,

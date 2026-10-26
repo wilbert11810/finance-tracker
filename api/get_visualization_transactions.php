@@ -1,12 +1,8 @@
 <?php
 require __DIR__ . "/bootstrap.php";
 
-if (!isset($_SESSION["user"])) {
-    echo json_encode(["error" => "Unauthorized access"]);
-    exit();
-}
+$user_id = require_user();
 
-$user_id = $_SESSION["user"]["id"];
 
 
 $selectedMonth = isset($_GET["month"]) ? $_GET["month"] : "";

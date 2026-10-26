@@ -1,12 +1,8 @@
 <?php
 require __DIR__ . "/bootstrap.php";
 
-if (!isset($_SESSION["user"])) {
-    echo json_encode(["error" => "Unauthorized"]);
-    exit();
-}
+$user_id = require_user();
 
-$user_id = $_SESSION["user"]["id"];
 $data = json_decode(file_get_contents("php://input"), true);
 
 $sql = "UPDATE finance SET title=?, amount=?, category=?, date=?, notes=? WHERE id=? AND user_id=?";

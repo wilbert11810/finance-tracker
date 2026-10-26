@@ -54,9 +54,6 @@ export default {
       errorMessage: "",
     };
   },
-  async mounted() {
-    await this.fetchSession();
-  },
   methods: {
     async loginUser() {
       if (!this.email || !this.password) {
@@ -70,7 +67,6 @@ export default {
         });
         console.log("Login response:", response.data);
         if (response.data.user) {
-          localStorage.setItem("user", JSON.stringify(response.data.user));
           alert("Logged in successfully!");
           this.$router.push("/");
           this.errorMessage = "";
@@ -80,17 +76,6 @@ export default {
       } catch (error) {
         console.error("Login failed:", error);
         this.errorMessage = "Login error. Please try again!";
-      }
-    },
-    async fetchSession() {
-      try {
-        const response = await api.get("/session.php");
-        if (response.data.user) {
-          this.user = response.data.user;
-          localStorage.setItem("user", JSON.stringify(this.user));
-        }
-      } catch (error) {
-        console.error("Session error: ", error);
       }
     },
   },

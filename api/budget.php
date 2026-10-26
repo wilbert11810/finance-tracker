@@ -1,7 +1,8 @@
 <?php
 require __DIR__ . "/bootstrap.php";
 
-$user_id = $_SESSION["user"]["id"];
+$user_id = (int) ($_SESSION["user_id"] ?? 0);
+
 $sql = "SELECT SUM(amount) AS totalSpent FROM finance WHERE user_id = ? AND MONTH(date) = MONTH(CURRENT_DATE())";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);

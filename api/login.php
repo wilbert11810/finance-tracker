@@ -29,7 +29,18 @@ if (!password_verify($password, $user["password_hash"])) {
     exit();
 }
 
-$_SESSION["user"] = $user;
-echo json_encode(["message" => "Login successful!", "user" => $user]);
+session_regenerate_id(true);
+$_SESSION["user_id"] = (int) $user["id"];
+
+echo json_encode([
+    "message" => "Login successful!",
+    "user" => [
+        "id"         => (int) $user["id"],
+        "first_name" => $user["first_name"],
+        "last_name"  => $user["last_name"],
+        "email"      => $user["email"],
+    ],
+]);
+
 
 

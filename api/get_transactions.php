@@ -1,12 +1,8 @@
 <?php
 require __DIR__ . "/bootstrap.php";
 
-if (!isset($_SESSION["user"])) {
-    echo json_encode(array("error" => "Unauthorized access"));
-    exit();
-}
+$user_id = require_user();
 
-$user_id   = $_SESSION["user"]["id"];
 $page      = isset($_GET["page"]) ? (int)$_GET["page"] : 1;
 $perPage   = isset($_GET["perPage"]) ? (int)$_GET["perPage"] : 5;
 $sortBy    = isset($_GET["sortBy"]) ? $_GET["sortBy"] : "date";
