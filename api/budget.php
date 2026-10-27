@@ -3,7 +3,10 @@ require __DIR__ . "/bootstrap.php";
 
 $user_id = require_user();
 
-$sql = "SELECT SUM(amount) AS totalSpent FROM finance WHERE user_id = ? AND MONTH(date) = MONTH(CURRENT_DATE())";
+$sql = "SELECT SUM(amount) AS totalSpent FROM finance
+        WHERE user_id = ?
+          AND YEAR(date) = YEAR(CURRENT_DATE())
+          AND MONTH(date) = MONTH(CURRENT_DATE())";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
