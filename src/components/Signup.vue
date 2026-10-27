@@ -136,13 +136,13 @@ export default {
           email: this.email,
           password: this.password,
         });
-        console.log("Server Response:", response.data);
         alert(response.data.message || "Registration failed!");
         if (response.data.success) {
           this.$router.push("/signin");
         }
       } catch (error) {
-        console.error("Register error:", error);
+        this.emailError =
+          error.response?.data?.error || "Registration failed. Please try again.";
       }
       this.isLoading = false;
     },
