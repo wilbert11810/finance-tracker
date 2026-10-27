@@ -42,11 +42,6 @@ if ($search) {
 
 $countSql = "SELECT COUNT(*) as total" . $baseSql;
 $stmtCount = $conn->prepare($countSql);
-if ($stmtCount === false) {
-    echo json_encode(array("error" => "Database error: " . $conn->error));
-    exit();
-}
-
 
 $bind_names = array();
 $bind_names[] = $paramTypes;
@@ -74,12 +69,6 @@ $mainParams[] = $perPage;
 
 $stmt = $conn->prepare($mainSql);
 
-if ($stmt === false) {
-    echo json_encode(array("error" => "Database error: " . $conn->error));
-    exit();
-}
-
-
 $bind_names_main = array();
 $bind_names_main[] = $mainParamTypes;
 foreach ($mainParams as $key => $value) {
@@ -87,12 +76,7 @@ foreach ($mainParams as $key => $value) {
 }
 call_user_func_array(array($stmt, 'bind_param'), $bind_names_main);
 
-
 $stmt->execute();
-if (!$stmt->execute()) {
-    echo json_encode(array("error" => "Database error: " . $stmt->error));
-    exit();
-}
 $result = $stmt->get_result();
 
 $transactions = array();
