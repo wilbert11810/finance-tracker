@@ -5,7 +5,8 @@ $user_id = require_user();
 
 $page      = isset($_GET["page"]) ? (int)$_GET["page"] : 1;
 $perPage   = isset($_GET["perPage"]) ? (int)$_GET["perPage"] : 5;
-$sortBy    = isset($_GET["sortBy"]) ? $_GET["sortBy"] : "date";
+$allowedSort = ["date", "amount", "title"];
+$sortBy = in_array($_GET["sortBy"] ?? "", $allowedSort, true) ? $_GET["sortBy"] : "date";
 $category  = isset($_GET["category"]) ? $_GET["category"] : "";
 $startDate = isset($_GET["startDate"]) ? $_GET["startDate"] : "";
 $endDate   = isset($_GET["endDate"]) ? $_GET["endDate"] : "";
