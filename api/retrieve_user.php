@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . "/bootstrap.php";
 
-$user_id = (int) ($_SESSION["user_id"] ?? 0);
+$user_id = require_user();
 
 $sql = "SELECT first_name, last_name FROM users WHERE id = ?";
 $stmt = $conn->prepare($sql);

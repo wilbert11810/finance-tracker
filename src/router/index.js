@@ -7,17 +7,24 @@ import SignUp from "../components/Signup.vue";
 import News from "../components/News.vue";
 
 const routes = [
-  { path: "/", component: Home },
-  { path: "/expenses", component: Expenses },
+  { path: "/", component: Home, meta: { requiresAuth: true } },
+  { path: "/expenses", component: Expenses, meta: { requiresAuth: true } },
   { path: "/about", component: About },
   { path: "/signin", component: Login },
   { path: "/signup", component: SignUp },
-  { path: "/news", component: News },
+  { path: "/news", component: News, meta: { requiresAuth: true } },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+import { getCurrentUser } from "../utils/auth.js";
+
+router.beforeEach(async (to) => {
+  if (to.meta.requiresAuth && !(await getCurrentUser())) {
+    return { path: "/signin" };
+  }
 });
 
 export default router;
