@@ -7,11 +7,8 @@ $password = isset($data["password"]) ? $data["password"] : "";
 
 
 if (!$data || !isset($data["email"]) || !isset($data["password"])) {
-    echo json_encode(["error" => "Invalid JSON request","raw_received" => $data_raw,
-	"decoded_data" => $data ]);
-    exit();
+    json_out(["error" => "Email and password are required."], 422);
 }
-
 
 $sql = "SELECT * FROM users WHERE email = ?";
 $stmt = $conn->prepare($sql);
@@ -19,20 +16,17 @@ $stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
-if (!$user) {
-    echo json_encode(["error" => "User not found"]); 
-    exit();
-}
 
-if (!password_verify($password, $user["password_hash"])) {
-    echo json_encode(["error" => "Incorrect password"]);
-    exit();
+// One message for both an unknown email and a wrong password, so the response
+// never reveals which emails are registered.
+if (!$user || !password_verify($password, $user["password_hash"])) {
+    json_out(["error" => "Invalid email or password."], 401);
 }
 
 session_regenerate_id(true);
 $_SESSION["user_id"] = (int) $user["id"];
 
-echo json_encode([
+json_out([
     "message" => "Login successful!",
     "user" => [
         "id"         => (int) $user["id"],
@@ -41,6 +35,4 @@ echo json_encode([
         "email"      => $user["email"],
     ],
 ]);
-
-
 

@@ -65,17 +65,14 @@ export default {
           email: this.email,
           password: this.password,
         });
-        console.log("Login response:", response.data);
         if (response.data.user) {
           alert("Logged in successfully!");
           this.$router.push("/");
           this.errorMessage = "";
-        } else {
-          this.errorMessage = response.data.error;
         }
       } catch (error) {
-        console.error("Login failed:", error);
-        this.errorMessage = "Login error. Please try again!";
+        this.errorMessage =
+          error.response?.data?.error || "Login error. Please try again!";
       }
     },
   },
