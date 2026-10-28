@@ -1,16 +1,10 @@
 <?php
 $conn = mysqli_init();
 
-// DB_SSL_CA is the "use TLS" switch: set in the deployed environment, unset
-// locally (so local Docker connects without TLS). Aiven requires TLS, and its
-// CA certificate is public, so it ships in the image at api/ca.pem and is
-// preferred over any configured path -- no secret file to misconfigure.
+// Aiven requires TLS. DB_SSL_CA is the path to its CA certificate on the
+// server; it is unset locally, so local Docker connects without TLS.
 $ca = getenv("DB_SSL_CA");
 if ($ca) {
-    $bundled = __DIR__ . "/ca.pem";
-    if (is_file($bundled)) {
-        $ca = $bundled;
-    }
     $conn->ssl_set(null, null, $ca, null, null);
 }
 
