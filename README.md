@@ -13,10 +13,13 @@ containerised deploy on Render + Aiven.
 
 ## Screenshots
 
-<!-- Add screenshots here, e.g. the dashboard, the expenses list with filters, and a chart.
-     Put the images in a docs/ folder and reference them:
+**Dashboard** — monthly budget and spending by category.
+
 ![Dashboard](docs/dashboard.png)
-![Expenses](docs/expenses.png) -->
+
+**Expenses** — add, filter, search, sort and paginate transactions.
+
+![Expenses](docs/expenses.png)
 
 ## Features
 
