@@ -5,6 +5,20 @@ $conn = mysqli_init();
 // server; it is unset locally, so local Docker connects without TLS.
 $ca = getenv("DB_SSL_CA");
 if ($ca) {
+    // --- TEMP DIAGNOSTIC: remove once the secret file is confirmed working ---
+    error_log("DBG ca_path=" . var_export($ca, true)
+        . " is_file=" . var_export(is_file($ca), true)
+        . " is_readable=" . var_export(is_readable($ca), true));
+    if (is_file($ca)) {
+        $c = (string) @file_get_contents($ca);
+        $lines = preg_split('/\R/', rtrim($c));
+        error_log("DBG ca_size=" . strlen($c)
+            . " md5=" . md5($c)
+            . " begin_count=" . substr_count($c, "BEGIN CERTIFICATE")
+            . " first=" . var_export($lines[0] ?? "", true)
+            . " last=" . var_export($lines[count($lines) - 1] ?? "", true));
+    }
+    // --- END TEMP DIAGNOSTIC ---
     $conn->ssl_set(null, null, $ca, null, null);
 }
 
