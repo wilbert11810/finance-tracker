@@ -36,24 +36,22 @@
 </template>
 
 <script>
-import { getCurrentUser, logoutUser } from "./utils/auth.js";
+import { auth, getCurrentUser, logoutUser } from "./utils/auth.js";
 
 export default {
-  data() {
-    return {
-      user: null,
-    };
+  computed: {
+    user() {
+      return auth.user;
+    },
   },
-  async mounted() {
-    this.refreshUser();
+  mounted() {
+    // Seed the navbar on first load (guarded routes also refresh it via the router guard).
+    getCurrentUser();
   },
   methods: {
     async logout() {
       await logoutUser();
-      this.user = null;
-    },
-    async refreshUser() {
-      this.user = await getCurrentUser();
+      this.$router.push("/signin");
     },
   },
 };
