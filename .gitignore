@@ -3,6 +3,9 @@
 .env.*
 !.env.example
 *.pem
+# Exception: Aiven's CA certificate is public (sent during every TLS handshake),
+# so it ships in the image to connect to the managed database.
+!api/ca.pem
 
 # Dependencies and build output
 node_modules
